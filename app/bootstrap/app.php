@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'resolve.tenant' => \App\Http\Middleware\ResolveTenant::class,
             'capture.utm' => \App\Http\Middleware\CaptureUtm::class,
             'capture.visit' => \App\Http\Middleware\CapturePageVisit::class,
+            'admin.tenant' => \App\Http\Middleware\ResolveAdminTenant::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

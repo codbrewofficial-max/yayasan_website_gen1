@@ -12,13 +12,20 @@ use Symfony\Component\HttpFoundation\Response;
  * Resolve tenant dari Host header untuk public website.
  *
  * Urutan: custom_domain → subdomain → 404 (domain tidak ditemukan).
+ * Domain utama platform (landing) tidak punya tenant → lanjut tanpa tenant.
  */
 class ResolveTenant
 {
     public function handle(Request $request, Closure $next): Response
     {
         $host = $request->getHost();
-        $tenant = null;
+
+        // Domain utama platform → landing page (tanpa tenant).
+        if (config('app.main_domain') && $host === config('app.main_domain')) {
+            app(TenantContext::class)->clear();
+
+            return $next($request);
+        }
 
         $tenant = Tenant::query()
             ->where('status', Tenant::STATUS_ACTIVE)

@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Main Platform Domain
+    |--------------------------------------------------------------------------
+    |
+    | Domain utama platform (landing page, tanpa tenant). Tenant public site
+    | di-resolve dari subdomain di atas domain ini (mis. kerkomit.yayasan-go-digital.test).
+    |
+    */
+
+    'main_domain' => env('APP_MAIN_DOMAIN'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

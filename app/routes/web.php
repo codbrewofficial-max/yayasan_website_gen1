@@ -25,9 +25,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['resolve.tenant', 'capture.utm', 'capture.visit'])->group(function () {
-    Route::get('/', function () {
-        return response(app(\App\Support\TenantContext::class)->id() ?: 'no tenant');
-    })->name('home');
+    Route::get('/', [\App\Http\Controllers\PublicSite\HomeController::class, 'index'])->name('home');
 
     Route::get('/programs', [\App\Http\Controllers\PublicSite\ProgramController::class, 'index'])->name('public.programs');
     Route::get('/program/{slug}', [\App\Http\Controllers\PublicSite\ProgramController::class, 'show'])->name('public.program');

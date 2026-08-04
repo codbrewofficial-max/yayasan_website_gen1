@@ -28,4 +28,10 @@ Route::middleware('resolve.tenant')->group(function () {
     Route::get('/', function () {
         return response(app(\App\Support\TenantContext::class)->id() ?: 'no tenant');
     })->name('home');
+
+    Route::get('/programs', [\App\Http\Controllers\PublicSite\ProgramController::class, 'index'])->name('public.programs');
+    Route::get('/program/{slug}', [\App\Http\Controllers\PublicSite\ProgramController::class, 'show'])->name('public.program');
+
+    Route::get('/campaigns', [\App\Http\Controllers\PublicSite\CampaignController::class, 'index'])->name('public.campaigns');
+    Route::get('/campaign/{slug}', [\App\Http\Controllers\PublicSite\CampaignController::class, 'show'])->name('public.campaign');
 });

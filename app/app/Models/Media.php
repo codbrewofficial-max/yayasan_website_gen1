@@ -36,4 +36,19 @@ class Media extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /**
+     * URL publik varian gambar (thumbnail / medium / large) atau dokumen.
+     */
+    public function url(string $variant = 'medium'): ?string
+    {
+        if ($this->type === self::TYPE_DOCUMENT) {
+            return $this->path ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->path) : null;
+        }
+
+        $column = in_array($variant, ['thumbnail', 'large'], true) ? "path_{$variant}" : 'path_medium';
+        $path = $this->{$column} ?? $this->path_medium;
+
+        return $path ? \Illuminate\Support\Facades\Storage::disk('public')->url($path) : null;
+    }
 }

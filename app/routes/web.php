@@ -34,4 +34,7 @@ Route::middleware('resolve.tenant')->group(function () {
 
     Route::get('/campaigns', [\App\Http\Controllers\PublicSite\CampaignController::class, 'index'])->name('public.campaigns');
     Route::get('/campaign/{slug}', [\App\Http\Controllers\PublicSite\CampaignController::class, 'show'])->name('public.campaign');
+
+    Route::get('/articles', [\App\Http\Controllers\PublicSite\ArticleController::class, 'index'])->name('public.articles');
+    Route::get('/article/{slug}', [\App\Http\Controllers\PublicSite\ArticleController::class, 'show'])->name('public.article');
 });

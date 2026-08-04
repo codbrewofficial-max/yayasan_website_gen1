@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             DemoSeeder::class,
             ProgramSeeder::class,
             CampaignSeeder::class,
+            ArticleSeeder::class,
         ]);
     }
 }

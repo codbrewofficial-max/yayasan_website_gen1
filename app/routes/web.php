@@ -40,4 +40,6 @@ Route::middleware('resolve.tenant')->group(function () {
 
     Route::get('/albums', [\App\Http\Controllers\PublicSite\AlbumController::class, 'index'])->name('public.albums');
     Route::get('/album/{slug}', [\App\Http\Controllers\PublicSite\AlbumController::class, 'show'])->name('public.album');
+
+    Route::get('/pengurus', [\App\Http\Controllers\PublicSite\MemberController::class, 'index'])->name('public.members');
 });

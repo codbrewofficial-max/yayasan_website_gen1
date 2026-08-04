@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             CampaignSeeder::class,
             ArticleSeeder::class,
             AlbumSeeder::class,
+            MemberSeeder::class,
         ]);
     }
 }

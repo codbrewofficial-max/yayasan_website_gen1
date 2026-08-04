@@ -9,6 +9,7 @@
             <a href="{{ route('home') }}" class="hover:text-blue-600">Beranda</a>
             <a href="{{ route('public.programs') }}" class="hover:text-blue-600">Program</a>
             <a href="{{ route('public.campaigns') }}" class="hover:text-blue-600">Galang Dana</a>
+            <a href="{{ route('public.members') }}" class="hover:text-blue-600">Pengurus</a>
             <a href="#" class="rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Donasi</a>
         </div>
     </div>

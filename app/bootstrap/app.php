@@ -7,13 +7,17 @@ use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
+        web: [__DIR__.'/../routes/web.php', __DIR__.'/../routes/webhook.php'],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'resolve.tenant' => \App\Http\Middleware\ResolveTenant::class,
+        ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'payment/webhook/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

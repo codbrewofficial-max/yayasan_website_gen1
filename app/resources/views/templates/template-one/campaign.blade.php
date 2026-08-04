@@ -49,6 +49,15 @@
                 </div>
             </div>
 
+            @if ($campaign->status === 'active')
+                <div class="mt-8">
+                    <a href="{{ route('public.donation', $campaign->slug) }}"
+                       class="inline-block rounded bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
+                        Donasi Sekarang
+                    </a>
+                </div>
+            @endif
+
             <div class="mt-8 prose max-w-none">
                 {!! $campaign->story !!}
             </div>

@@ -12,5 +12,6 @@
         @yield('content')
     </main>
     @include('templates._shared.footer')
+    @yield('scripts')
 </body>
 </html>

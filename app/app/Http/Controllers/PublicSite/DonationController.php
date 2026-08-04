@@ -63,6 +63,8 @@ class DonationController extends Controller
         ]);
 
         try {
+            $sessionUtm = $request->session()->get(\App\Http\Middleware\CaptureUtm::SESSION_KEY, []);
+
             $result = $this->donationService->create([
                 'campaign' => $campaign,
                 'donor_name' => $data['donor_name'],
@@ -72,12 +74,13 @@ class DonationController extends Controller
                 'message' => $data['message'] ?? null,
                 'is_anonymous' => $request->boolean('is_anonymous'),
                 'utm' => [
-                    'source' => $request->input('utm_source') ?: $request->query('utm_source'),
-                    'medium' => $request->input('utm_medium') ?: $request->query('utm_medium'),
-                    'campaign' => $request->input('utm_campaign') ?: $request->query('utm_campaign'),
-                    'content' => $request->input('utm_content') ?: $request->query('utm_content'),
-                    'term' => $request->input('utm_term') ?: $request->query('utm_term'),
+                    'source' => $request->input('utm_source') ?: ($sessionUtm['utm_source'] ?? null),
+                    'medium' => $request->input('utm_medium') ?: ($sessionUtm['utm_medium'] ?? null),
+                    'campaign' => $request->input('utm_campaign') ?: ($sessionUtm['utm_campaign'] ?? null),
+                    'content' => $request->input('utm_content') ?: ($sessionUtm['utm_content'] ?? null),
+                    'term' => $request->input('utm_term') ?: ($sessionUtm['utm_term'] ?? null),
                 ],
+                'campaign_link_id' => $request->session()->get('campaign_link_id'),
             ]);
         } catch (\InvalidArgumentException|\RuntimeException $e) {
             return back()->withInput()->withErrors(['amount' => $e->getMessage()]);

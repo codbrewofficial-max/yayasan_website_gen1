@@ -49,6 +49,17 @@ class DonationService
         $orderId = $this->buildOrderId($tenantModel);
         $utm = $data['utm'] ?? [];
 
+        // Atribusi link: pastikan milik campaign & tenant yang sama (anti cross-attribution).
+        $campaignLinkId = $data['campaign_link_id'] ?? null;
+        if ($campaignLinkId) {
+            $linkBelongsToCampaign = \App\Models\CampaignLink::query()
+                ->whereKey($campaignLinkId)
+                ->where('campaign_id', $campaign->id)
+                ->exists();
+
+            $campaignLinkId = $linkBelongsToCampaign ? $campaignLinkId : null;
+        }
+
         $donation = Donation::create([
             'tenant_id' => $tenant,
             'campaign_id' => $campaign->id,
@@ -67,7 +78,7 @@ class DonationService
             'utm_campaign' => $utm['campaign'] ?? null,
             'utm_content' => $utm['content'] ?? null,
             'utm_term' => $utm['term'] ?? null,
-            'campaign_link_id' => $data['campaign_link_id'] ?? null,
+            'campaign_link_id' => $campaignLinkId,
             'page_visit_id' => $data['page_visit_id'] ?? null,
         ]);
 

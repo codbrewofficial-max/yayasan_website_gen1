@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor/disable', [TwoFactorSetupController::class, 'disable'])->name('two-factor.disable');
 });
 
-Route::middleware('resolve.tenant')->group(function () {
+Route::middleware(['resolve.tenant', 'capture.utm'])->group(function () {
     Route::get('/', function () {
         return response(app(\App\Support\TenantContext::class)->id() ?: 'no tenant');
     })->name('home');

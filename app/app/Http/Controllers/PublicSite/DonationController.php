@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PublicSite;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\Donation;
 use App\Services\DonationService;
 use App\Services\TemplateService;
 use Illuminate\Http\RedirectResponse;
@@ -89,5 +90,32 @@ class DonationController extends Controller
         return redirect()
             ->route('public.donation', $campaign->slug)
             ->with('snap_token', $result['token']);
+    }
+
+    /**
+     * Halaman status pembayaran (return_url dari Snap).
+     * Memantulkan status donasi real-time dari DB — tidak percaya query param.
+     */
+    public function status(Request $request, string $slug, string $orderId): View
+    {
+        $campaign = Campaign::query()
+            ->where('slug', $slug)
+            ->whereIn('status', [Campaign::STATUS_ACTIVE, Campaign::STATUS_COMPLETED, Campaign::STATUS_PAUSED])
+            ->firstOrFail();
+
+        $donation = Donation::query()
+            ->where('campaign_id', $campaign->id)
+            ->where('order_id', $orderId)
+            ->firstOrFail();
+
+        $seo = [
+            'title' => 'Status Donasi — ' . $campaign->title,
+            'description' => 'Status donasi Anda untuk ' . $campaign->title . '.',
+            'canonical' => route('public.donation.status', [$campaign->slug, $donation->order_id]),
+            'type' => 'website',
+            'noindex' => true,
+        ];
+
+        return view($this->templateService->baseView('donation-status'), compact('campaign', 'donation', 'seo'));
     }
 }

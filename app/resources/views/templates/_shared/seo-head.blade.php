@@ -1,4 +1,7 @@
 @if (! empty($seo))
+    @if (! empty($seo['noindex']))
+        <meta name="robots" content="noindex, nofollow">
+    @endif
     <title>{{ $seo['title'] ?? config('app.name') }}</title>
     <meta name="description" content="{{ $seo['description'] ?? '' }}">
     <link rel="canonical" href="{{ $seo['canonical'] ?? request()->url() }}">

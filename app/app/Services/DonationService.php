@@ -85,6 +85,7 @@ class DonationService
                 'quantity' => 1,
                 'name' => Str::limit("Donasi: {$campaign->title}", 50),
             ],
+            'return_url' => route('public.donation.status', [$campaign->slug, $orderId]),
         ]);
 
         if ($result['ref']) {

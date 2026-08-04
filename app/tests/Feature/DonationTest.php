@@ -195,4 +195,55 @@ class DonationTest extends TestCase
             'payment_status' => Donation::STATUS_EXPIRED,
         ]);
     }
+
+    public function test_status_page_shows_success_when_paid(): void
+    {
+        $campaign = $this->campaign();
+        $donation = Donation::create([
+            'tenant_id' => $this->tenant->id,
+            'campaign_id' => $campaign->id,
+            'order_id' => 'TKERKOMIT-' . fake()->uuid(),
+            'donor_name' => 'Siti',
+            'donor_email' => 'siti4@example.com',
+            'donor_phone' => '081298765432',
+            'amount' => 50000,
+            'payment_status' => Donation::STATUS_PAID,
+            'paid_at' => now(),
+        ]);
+
+        $response = $this->get("http://kerkomit.test/donasi/{$campaign->slug}/status/{$donation->order_id}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Donasi Berhasil');
+        $response->assertSee($donation->order_id);
+        $response->assertSee('noindex', false);
+    }
+
+    public function test_status_page_shows_pending_state(): void
+    {
+        $campaign = $this->campaign();
+        $donation = Donation::create([
+            'tenant_id' => $this->tenant->id,
+            'campaign_id' => $campaign->id,
+            'order_id' => 'TKERKOMIT-' . fake()->uuid(),
+            'donor_name' => 'Siti',
+            'donor_email' => 'siti5@example.com',
+            'donor_phone' => '081298765432',
+            'amount' => 50000,
+        ]);
+
+        $response = $this->get("http://kerkomit.test/donasi/{$campaign->slug}/status/{$donation->order_id}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Menunggu Pembayaran');
+        $response->assertSee('Coba Bayar Lagi');
+    }
+
+    public function test_status_page_404_for_other_tenant_order(): void
+    {
+        $campaign = $this->campaign();
+
+        $response = $this->get("http://kerkomit.test/donasi/{$campaign->slug}/status/TLAIN-" . fake()->uuid());
+        $response->assertStatus(404);
+    }
 }

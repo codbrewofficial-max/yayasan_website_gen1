@@ -28,6 +28,10 @@ class MidtransGateway implements PaymentGateway
             'expiry' => $this->config['expiry'] ?? [],
         ];
 
+        if (! empty($params['return_url'])) {
+            $payload['callbacks']['finish'] = $params['return_url'];
+        }
+
         $response = Http::withBasicAuth($serverKey, '')
             ->post($this->config['base_url'] . '/transactions', $payload);
 

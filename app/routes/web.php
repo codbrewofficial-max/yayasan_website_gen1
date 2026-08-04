@@ -37,6 +37,7 @@ Route::middleware('resolve.tenant')->group(function () {
 
     Route::get('/donasi/{slug}', [\App\Http\Controllers\PublicSite\DonationController::class, 'show'])->name('public.donation');
     Route::post('/donasi/{slug}', [\App\Http\Controllers\PublicSite\DonationController::class, 'store']);
+    Route::get('/donasi/{slug}/status/{orderId}', [\App\Http\Controllers\PublicSite\DonationController::class, 'status'])->name('public.donation.status');
 
     Route::get('/articles', [\App\Http\Controllers\PublicSite\ArticleController::class, 'index'])->name('public.articles');
     Route::get('/article/{slug}', [\App\Http\Controllers\PublicSite\ArticleController::class, 'show'])->name('public.article');

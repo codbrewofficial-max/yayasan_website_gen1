@@ -38,8 +38,24 @@ class Tenant extends Model
     public const STATUS_REJECTED = 'rejected';
     public const STATUS_SUSPENDED = 'suspended';
 
+    public static function statuses(): array
+    {
+        return [
+            self::STATUS_DRAFT,
+            self::STATUS_PENDING_VERIFICATION,
+            self::STATUS_ACTIVE,
+            self::STATUS_REJECTED,
+            self::STATUS_SUSPENDED,
+        ];
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
     }
 }

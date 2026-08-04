@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TenantSwitcherController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\ProgramController;
+use App\Http\Controllers\Admin\TenantController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -33,6 +34,11 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
     Route::middleware('can:content.manage')->group(function () {
         Route::resource('programs', ProgramController::class);
         Route::resource('campaigns', CampaignController::class);
+    });
+
+    Route::middleware('can:tenant.view')->group(function () {
+        Route::resource('tenants', TenantController::class);
+        Route::put('/tenants/{tenant}/status', [TenantController::class, 'updateStatus'])->name('tenants.status');
     });
 });
 

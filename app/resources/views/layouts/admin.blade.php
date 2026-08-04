@@ -9,6 +9,7 @@
 <body class="bg-gray-100 text-gray-900">
     @php
         $user = auth()->user();
+        $tenant = app(\App\Support\TenantContext::class)->get();
         $canViewTenants = $user->can('tenant.view');
         $menu = [
             ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'permission' => null],

@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\TwoFactorSetupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TenantSwitcherController;
+use App\Http\Controllers\Admin\CampaignController;
+use App\Http\Controllers\Admin\ProgramController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -27,6 +29,11 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::post('/switch-tenant/{tenant}', TenantSwitcherController::class)->name('switch-tenant');
+
+    Route::middleware('can:content.manage')->group(function () {
+        Route::resource('programs', ProgramController::class);
+        Route::resource('campaigns', CampaignController::class);
+    });
 });
 
 Route::middleware(['resolve.tenant', 'capture.utm', 'capture.visit'])->group(function () {

@@ -15,6 +15,7 @@ class TenantResolveTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+        app(\App\Support\TenantContext::class)->clear();
     }
 
     public function test_resolves_tenant_by_subdomain(): void

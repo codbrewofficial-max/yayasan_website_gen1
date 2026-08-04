@@ -37,4 +37,7 @@ Route::middleware('resolve.tenant')->group(function () {
 
     Route::get('/articles', [\App\Http\Controllers\PublicSite\ArticleController::class, 'index'])->name('public.articles');
     Route::get('/article/{slug}', [\App\Http\Controllers\PublicSite\ArticleController::class, 'show'])->name('public.article');
+
+    Route::get('/albums', [\App\Http\Controllers\PublicSite\AlbumController::class, 'index'])->name('public.albums');
+    Route::get('/album/{slug}', [\App\Http\Controllers\PublicSite\AlbumController::class, 'show'])->name('public.album');
 });

@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'resolve.tenant' => \App\Http\Middleware\ResolveTenant::class,
             'capture.utm' => \App\Http\Middleware\CaptureUtm::class,
+            'capture.visit' => \App\Http\Middleware\CapturePageVisit::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

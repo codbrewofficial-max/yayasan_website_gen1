@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CampaignLink;
 use App\Models\LinkClick;
+use App\Support\DetectsDevice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,8 @@ use Illuminate\Http\Request;
  */
 class ShortLinkController extends Controller
 {
+    use DetectsDevice;
+
     public function __invoke(Request $request, string $shortCode): RedirectResponse
     {
         $link = CampaignLink::query()
@@ -46,20 +49,5 @@ class ShortLinkController extends Controller
             'clicks_count' => $link->clicks_count + 1,
             'last_clicked_at' => now(),
         ])->save();
-    }
-
-    protected function detectDevice(Request $request): string
-    {
-        $ua = strtolower($request->userAgent() ?? '');
-
-        if (str_contains($ua, 'ipad') || (str_contains($ua, 'android') && ! str_contains($ua, 'mobile'))) {
-            return LinkClick::DEVICE_TABLET;
-        }
-
-        if (preg_match('/mobile|android|iphone|ipod/i', $ua)) {
-            return LinkClick::DEVICE_MOBILE;
-        }
-
-        return LinkClick::DEVICE_DESKTOP;
     }
 }

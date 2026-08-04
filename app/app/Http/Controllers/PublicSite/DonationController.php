@@ -81,6 +81,7 @@ class DonationController extends Controller
                     'term' => $request->input('utm_term') ?: ($sessionUtm['utm_term'] ?? null),
                 ],
                 'campaign_link_id' => $request->session()->get('campaign_link_id'),
+                'page_visit_id' => $request->session()->get('page_visit_id'),
             ]);
         } catch (\InvalidArgumentException|\RuntimeException $e) {
             return back()->withInput()->withErrors(['amount' => $e->getMessage()]);

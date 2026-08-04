@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor/disable', [TwoFactorSetupController::class, 'disable'])->name('two-factor.disable');
 });
 
-Route::middleware(['resolve.tenant', 'capture.utm'])->group(function () {
+Route::middleware(['resolve.tenant', 'capture.utm', 'capture.visit'])->group(function () {
     Route::get('/', function () {
         return response(app(\App\Support\TenantContext::class)->id() ?: 'no tenant');
     })->name('home');
@@ -46,4 +46,9 @@ Route::middleware(['resolve.tenant', 'capture.utm'])->group(function () {
     Route::get('/album/{slug}', [\App\Http\Controllers\PublicSite\AlbumController::class, 'show'])->name('public.album');
 
     Route::get('/pengurus', [\App\Http\Controllers\PublicSite\MemberController::class, 'index'])->name('public.members');
+
+    Route::get('/kontak', [\App\Http\Controllers\PublicSite\LeadController::class, 'show'])->name('public.contact');
+    Route::post('/kontak', [\App\Http\Controllers\PublicSite\LeadController::class, 'store']);
+
+    Route::get('/page/{slug}', [\App\Http\Controllers\PublicSite\PageController::class, 'show'])->name('public.page');
 });

@@ -12,11 +12,11 @@
 
 @section('content')
     <nav class="text-sm text-gray-500 mb-4">
-        <a href="{{ route('home') }}" class="hover:text-blue-600">Beranda</a>
+        <a href="{{ route('home') }}" class="hover:text-primary">Beranda</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.campaigns') }}" class="hover:text-blue-600">Galang Dana</a>
+        <a href="{{ route('public.campaigns') }}" class="hover:text-primary">Galang Dana</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.campaign', $campaign->slug) }}" class="hover:text-blue-600">{{ $campaign->title }}</a>
+        <a href="{{ route('public.campaign', $campaign->slug) }}" class="hover:text-primary">{{ $campaign->title }}</a>
         <span class="mx-2">›</span>
         <span>Status Donasi</span>
     </nav>
@@ -72,12 +72,12 @@
         <div class="mt-8 flex flex-col gap-3">
             @if ($pending)
                 <a href="{{ route('public.donation', $campaign->slug) }}"
-                   class="rounded bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700">
+                   class="rounded bg-primary px-4 py-3 font-semibold text-white hover:bg-primary/90">
                     Coba Bayar Lagi
                 </a>
             @elseif (! $paid)
                 <a href="{{ route('public.donation', $campaign->slug) }}"
-                   class="rounded bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700">
+                   class="rounded bg-primary px-4 py-3 font-semibold text-white hover:bg-primary/90">
                     Donasi Ulang
                 </a>
             @endif

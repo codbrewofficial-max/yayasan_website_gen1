@@ -2,9 +2,9 @@
 
 @section('content')
     <nav class="text-sm text-gray-500 mb-4">
-        <a href="{{ route('home') }}" class="hover:text-blue-600">Beranda</a>
+        <a href="{{ route('home') }}" class="hover:text-primary">Beranda</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.programs') }}" class="hover:text-blue-600">Program</a>
+        <a href="{{ route('public.programs') }}" class="hover:text-primary">Program</a>
         <span class="mx-2">›</span>
         <span>{{ $program->title }}</span>
     </nav>
@@ -17,7 +17,7 @@
             <h1 class="text-3xl font-bold">{{ $program->title }}</h1>
             <p class="mt-2 text-sm text-gray-500">
                 @if ($program->status)
-                    <span class="text-blue-600 font-medium">{{ ucfirst($program->status) }}</span>
+                    <span class="text-primary font-medium">{{ ucfirst($program->status) }}</span>
                 @endif
                 @if ($program->location)
                     · {{ $program->location }}

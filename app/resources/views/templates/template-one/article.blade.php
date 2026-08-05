@@ -2,9 +2,9 @@
 
 @section('content')
     <nav class="text-sm text-gray-500 mb-4">
-        <a href="{{ route('home') }}" class="hover:text-blue-600">Beranda</a>
+        <a href="{{ route('home') }}" class="hover:text-primary">Beranda</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.articles') }}" class="hover:text-blue-600">Artikel</a>
+        <a href="{{ route('public.articles') }}" class="hover:text-primary">Artikel</a>
         <span class="mx-2">›</span>
         <span>{{ $article->title }}</span>
     </nav>
@@ -43,7 +43,7 @@
                             <img src="{{ $item->featuredImage->url('medium') }}" alt="{{ $item->featuredImage->alt_text }}" class="w-full h-32 object-cover">
                         @endif
                         <div class="p-4">
-                            <h3 class="font-semibold group-hover:text-blue-700">{{ $item->title }}</h3>
+                            <h3 class="font-semibold group-hover:text-primary">{{ $item->title }}</h3>
                         </div>
                     </a>
                 @endforeach

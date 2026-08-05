@@ -2,9 +2,9 @@
 
 @section('content')
     <nav class="text-sm text-gray-500 mb-4">
-        <a href="{{ route('home') }}" class="hover:text-blue-600">Beranda</a>
+        <a href="{{ route('home') }}" class="hover:text-primary">Beranda</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.campaigns') }}" class="hover:text-blue-600">Galang Dana</a>
+        <a href="{{ route('public.campaigns') }}" class="hover:text-primary">Galang Dana</a>
         <span class="mx-2">›</span>
         <span>{{ $campaign->title }}</span>
     </nav>
@@ -30,7 +30,7 @@
 
             <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                 <div class="rounded-lg bg-gray-50 p-4">
-                    <p class="text-2xl font-bold text-blue-700">Rp {{ number_format((float) $campaign->collected_amount, 0, ',', '.') }}</p>
+                    <p class="text-2xl font-bold text-primary">Rp {{ number_format((float) $campaign->collected_amount, 0, ',', '.') }}</p>
                     <p class="text-sm text-gray-500">Terkumpul</p>
                 </div>
                 <div class="rounded-lg bg-gray-50 p-4">
@@ -52,7 +52,7 @@
             @if ($campaign->status === 'active')
                 <div class="mt-8">
                     <a href="{{ route('public.donation', $campaign->slug) }}"
-                       class="inline-block rounded bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
+                       class="inline-block rounded bg-primary px-6 py-3 font-semibold text-white hover:bg-primary/90">
                         Donasi Sekarang
                     </a>
                 </div>

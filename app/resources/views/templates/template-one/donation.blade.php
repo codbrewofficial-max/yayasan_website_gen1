@@ -1,12 +1,17 @@
 @extends('templates.template-one.layout', ['seo' => $seo])
 
+@php
+    $settings = app(\App\Services\TemplateService::class)->settings();
+    $minAmount = $settings['donation_min_amount'] ?: \App\Services\DonationService::MIN_AMOUNT;
+@endphp
+
 @section('content')
     <nav class="text-sm text-gray-500 mb-4">
-        <a href="{{ route('home') }}" class="hover:text-blue-600">Beranda</a>
+        <a href="{{ route('home') }}" class="hover:text-primary">Beranda</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.campaigns') }}" class="hover:text-blue-600">Galang Dana</a>
+        <a href="{{ route('public.campaigns') }}" class="hover:text-primary">Galang Dana</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('public.campaign', $campaign->slug) }}" class="hover:text-blue-600">{{ $campaign->title }}</a>
+        <a href="{{ route('public.campaign', $campaign->slug) }}" class="hover:text-primary">{{ $campaign->title }}</a>
         <span class="mx-2">›</span>
         <span>Donasi</span>
     </nav>
@@ -42,6 +47,10 @@
                 </div>
             @endif
 
+            @if (! empty($settings['donation_notice']))
+                <div class="mb-4 rounded-lg bg-gray-50 border border-gray-200 p-4 text-sm text-gray-700">{!! nl2br(e($settings['donation_notice'])) !!}</div>
+            @endif
+
             <form method="POST" action="{{ route('public.donation', $campaign->slug) }}" class="space-y-4">
                 @csrf
 
@@ -71,12 +80,12 @@
                     <div class="mt-2 grid grid-cols-3 gap-2">
                         @foreach ([50000, 100000, 250000, 500000, 1000000, 2500000] as $preset)
                             <button type="button" data-preset="{{ $preset }}"
-                                    class="preset-btn rounded border border-gray-300 px-3 py-2 text-sm hover:bg-blue-50">
+                                    class="preset-btn rounded border border-gray-300 px-3 py-2 text-sm hover:bg-primary/10">
                                 {{ number_format($preset, 0, ',', '.') }}
                             </button>
                         @endforeach
                     </div>
-                    <input name="amount" id="amount" type="number" value="{{ old('amount') }}" required min="10000"
+                    <input name="amount" id="amount" type="number" value="{{ old('amount') }}" required min="{{ $minAmount }}"
                            class="mt-2 w-full rounded border border-gray-300 px-3 py-2">
                     @error('amount') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -96,7 +105,7 @@
                 @endforeach
 
                 <button type="submit"
-                        class="w-full rounded bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700">
+                        class="w-full rounded bg-primary px-4 py-3 font-semibold text-white hover:bg-primary/90">
                     Lanjutkan ke Pembayaran
                 </button>
             </form>

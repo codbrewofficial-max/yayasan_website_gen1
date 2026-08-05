@@ -19,7 +19,7 @@
                             @endif
                             <div class="p-4">
                                 <p class="font-semibold">{{ $member->name }}</p>
-                                <p class="text-sm text-blue-600">{{ $member->position }}</p>
+                                <p class="text-sm text-primary">{{ $member->position }}</p>
                                 @if ($member->bio)
                                     <p class="mt-1 text-xs text-gray-500">{{ $member->bio }}</p>
                                 @endif

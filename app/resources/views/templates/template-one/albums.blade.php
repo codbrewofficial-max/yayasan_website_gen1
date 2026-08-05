@@ -16,9 +16,9 @@
                     @endif
                     <div class="p-4">
                         @if ($album->category)
-                            <span class="text-xs text-blue-600 font-semibold">{{ $album->category }}</span>
+                            <span class="text-xs text-primary font-semibold">{{ $album->category }}</span>
                         @endif
-                        <h2 class="mt-1 font-semibold group-hover:text-blue-700">{{ $album->title }}</h2>
+                        <h2 class="mt-1 font-semibold group-hover:text-primary">{{ $album->title }}</h2>
                         @if ($album->description)
                             <p class="mt-1 text-sm text-gray-500 line-clamp-2">{{ $album->description }}</p>
                         @endif

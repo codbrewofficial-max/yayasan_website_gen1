@@ -107,4 +107,35 @@ class PublicSiteThemeTest extends TestCase
     {
         $this->get('http://yayasan-go-digital.test/sitemap.xml')->assertStatus(404);
     }
+
+    public function test_campaign_detail_uses_theme_color_cta(): void
+    {
+        $this->saveSettings(['theme_color' => '#0d9488']);
+
+        $this->get('http://kerkomit.test/campaign/beasiswa-batch-2026')
+            ->assertStatus(200)
+            ->assertSee('bg-primary')
+            ->assertSee('Donasi Sekarang');
+    }
+
+    public function test_donation_page_shows_notice_and_min_amount_from_settings(): void
+    {
+        $this->saveSettings([
+            'donation_notice' => 'Terima kasih sudah berdonasi.',
+            'donation_min_amount' => 50000,
+        ]);
+
+        $this->get('http://kerkomit.test/donasi/beasiswa-batch-2026')
+            ->assertStatus(200)
+            ->assertSee('Terima kasih sudah berdonasi.')
+            ->assertSee('min="50000"', false);
+    }
+
+    public function test_all_public_pages_render_for_tenant(): void
+    {
+        foreach (['/', '/programs', '/campaigns', '/articles', '/albums', '/pengurus', '/kontak', '/page/tentang'] as $path) {
+            $this->get('http://kerkomit.test' . $path)
+                ->assertStatus(200);
+        }
+    }
 }

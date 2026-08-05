@@ -16,6 +16,7 @@
         .hover\:bg-primary:hover { background-color: var(--color-primary); }
         .border-primary { border-color: var(--color-primary); }
         .bg-primary\/90 { background-color: color-mix(in srgb, var(--color-primary) 90%, transparent); }
+        .group:hover .group-hover\:text-primary { color: var(--color-primary); }
     </style>
     @include('templates._shared.seo-head', ['seo' => $seo ?? []])
     @if (! empty($settings['ga_measurement_id']))

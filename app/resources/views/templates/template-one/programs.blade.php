@@ -16,9 +16,9 @@
                     @endif
                     <div class="p-4">
                         @if ($program->category)
-                            <span class="text-xs text-blue-600 font-semibold">{{ $program->category }}</span>
+                            <span class="text-xs text-primary font-semibold">{{ $program->category }}</span>
                         @endif
-                        <h2 class="mt-1 font-semibold group-hover:text-blue-700">{{ $program->title }}</h2>
+                        <h2 class="mt-1 font-semibold group-hover:text-primary">{{ $program->title }}</h2>
                         <p class="mt-1 text-sm text-gray-500 line-clamp-2">{!! \Illuminate\Support\Str::limit(strip_tags($program->content ?? ''), 120) !!}</p>
                     </div>
                 </a>

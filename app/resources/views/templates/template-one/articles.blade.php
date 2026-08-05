@@ -16,9 +16,9 @@
                     @endif
                     <div class="p-4">
                         @if ($article->category)
-                            <span class="text-xs text-blue-600 font-semibold">{{ $article->category }}</span>
+                            <span class="text-xs text-primary font-semibold">{{ $article->category }}</span>
                         @endif
-                        <h2 class="mt-1 font-semibold group-hover:text-blue-700">{{ $article->title }}</h2>
+                        <h2 class="mt-1 font-semibold group-hover:text-primary">{{ $article->title }}</h2>
                         @if ($article->excerpt)
                             <p class="mt-1 text-sm text-gray-500 line-clamp-2">{{ $article->excerpt }}</p>
                         @endif

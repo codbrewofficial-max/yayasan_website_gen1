@@ -4,7 +4,7 @@
     <section class="rounded-lg bg-primary text-white p-8 md:p-12">
         <h1 class="text-3xl md:text-4xl font-extrabold">{{ app(\App\Services\TemplateService::class)->siteName() }}</h1>
         @php($tagline = app(\App\Services\TemplateService::class)->settings()['site_tagline'])
-        <p class="mt-3 max-w-2xl {{ $tagline ? 'text-white/90' : 'text-blue-100' }}">{{ $tagline ?: 'Bersama kita wujudkan kebaikan melalui pendidikan dan kemanusiaan.' }}</p>
+        <p class="mt-3 max-w-2xl text-white/90">{{ $tagline ?: 'Bersama kita wujudkan kebaikan melalui pendidikan dan kemanusiaan.' }}</p>
     </section>
 
     <section class="mt-10">

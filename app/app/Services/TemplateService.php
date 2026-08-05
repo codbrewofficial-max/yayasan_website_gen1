@@ -15,6 +15,8 @@ class TemplateService
 {
     public const DEFAULT_TEMPLATE = 'template-one';
 
+    public const DEFAULT_THEME_COLOR = '#2563eb';
+
     public function __construct(protected TenantContext $tenantContext)
     {
     }
@@ -36,5 +38,34 @@ class TemplateService
     public function baseView(string $page): string
     {
         return "templates.{$this->current()}.{$page}";
+    }
+
+    /**
+     * Warna tema utama tenant (hex). Fallback biru default.
+     */
+    public function themeColor(): string
+    {
+        return $this->settings()['theme_color'] ?? self::DEFAULT_THEME_COLOR;
+    }
+
+    /**
+     * Nama situs: setting site_name > nama tenant > nama aplikasi.
+     */
+    public function siteName(): string
+    {
+        $settings = $this->settings();
+        $tenant = $this->tenantContext->get();
+
+        return $settings['site_name']
+            ?? $tenant?->name
+            ?? config('app.name');
+    }
+
+    /**
+     * Semua setting tenant (sudah ter-cache di SettingService).
+     */
+    public function settings(): array
+    {
+        return app(SettingService::class)->all();
     }
 }

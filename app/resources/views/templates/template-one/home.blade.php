@@ -1,15 +1,16 @@
 @extends('templates.template-one.layout', ['seo' => $seo])
 
 @section('content')
-    <section class="rounded-lg bg-blue-600 text-white p-8 md:p-12">
-        <h1 class="text-3xl md:text-4xl font-extrabold">Selamat Datang di {{ app(\App\Support\TenantContext::class)->get()->name }}</h1>
-        <p class="mt-3 max-w-2xl text-blue-100">Bersama kita wujudkan kebaikan melalui pendidikan dan kemanusiaan.</p>
+    <section class="rounded-lg bg-primary text-white p-8 md:p-12">
+        <h1 class="text-3xl md:text-4xl font-extrabold">{{ app(\App\Services\TemplateService::class)->siteName() }}</h1>
+        @php($tagline = app(\App\Services\TemplateService::class)->settings()['site_tagline'])
+        <p class="mt-3 max-w-2xl {{ $tagline ? 'text-white/90' : 'text-blue-100' }}">{{ $tagline ?: 'Bersama kita wujudkan kebaikan melalui pendidikan dan kemanusiaan.' }}</p>
     </section>
 
     <section class="mt-10">
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold">Galang Dana Aktif</h2>
-            <a href="{{ route('public.campaigns') }}" class="text-blue-600 hover:underline text-sm font-semibold">Lihat semua</a>
+            <a href="{{ route('public.campaigns') }}" class="text-primary hover:underline text-sm font-semibold">Lihat semua</a>
         </div>
 
         @if ($campaigns->isEmpty())

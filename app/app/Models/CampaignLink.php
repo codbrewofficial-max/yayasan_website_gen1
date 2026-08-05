@@ -56,12 +56,11 @@ class CampaignLink extends Model
     }
 
     /**
-     * Konversi donasi: total donasi paid yang terikat link ini.
+     * Donasi paid yang terikat link ini.
      */
     public function paidDonations()
     {
-        return Donation::query()
-            ->where('campaign_link_id', $this->id)
+        return $this->hasMany(Donation::class, 'campaign_link_id')
             ->where('payment_status', Donation::STATUS_PAID);
     }
 }

@@ -177,6 +177,34 @@ class DonationService
         };
     }
 
+    /**
+     * Ubah status donasi secara manual oleh admin.
+     *
+     * - ke paid → kredit collected_amount + kirim e-receipt (idempotent).
+     * - refunded pada donasi paid → kurangi collected_amount.
+     */
+    public function setStatusByAdmin(Donation $donation, string $status): void
+    {
+        if ($status === Donation::STATUS_PAID) {
+            $this->applyStatus($donation, Donation::STATUS_PAID);
+
+            return;
+        }
+
+        if ($status === Donation::STATUS_REFUNDED && $donation->isPaid()) {
+            $donation->forceFill(['payment_status' => Donation::STATUS_REFUNDED])->save();
+
+            Campaign::query()
+                ->withoutTenantScope()
+                ->whereKey($donation->campaign_id)
+                ->decrement('collected_amount', (float) $donation->amount);
+
+            return;
+        }
+
+        $donation->forceFill(['payment_status' => $status])->save();
+    }
+
     protected function guardCampaign(Campaign $campaign): void
     {
         if ($campaign->status !== Campaign::STATUS_ACTIVE) {

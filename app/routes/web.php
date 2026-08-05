@@ -8,10 +8,17 @@ use App\Http\Controllers\TenantSwitcherController;
 use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CampaignController;
+use App\Http\Controllers\Admin\CampaignLinkController;
+use App\Http\Controllers\Admin\DonationController;
+use App\Http\Controllers\Admin\LeadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProgramController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TenantController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -45,6 +52,39 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
         Route::delete('/galleries/{gallery}', [AlbumController::class, 'removeGallery'])->name('galleries.destroy');
 
         Route::resource('members', MemberController::class);
+
+        Route::resource('pages', PageController::class);
+    });
+
+    Route::middleware('can:donation.manage')->group(function () {
+        Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
+        Route::get('/donations/{donation}', [DonationController::class, 'show'])->name('donations.show');
+
+        Route::resource('campaign-links', CampaignLinkController::class)->except(['show']);
+    });
+
+    Route::middleware('can:donation.process')->group(function () {
+        Route::put('/donations/{donation}/status', [DonationController::class, 'updateStatus'])->name('donations.status');
+    });
+
+    Route::middleware('can:content.manage')->group(function () {
+        Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
+        Route::get('/leads/{lead}', [LeadController::class, 'show'])->name('leads.show');
+        Route::put('/leads/{lead}/status', [LeadController::class, 'updateStatus'])->name('leads.status');
+        Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('leads.destroy');
+    });
+
+    Route::middleware('can:user.manage')->group(function () {
+        Route::resource('users', UserController::class);
+    });
+
+    Route::middleware('can:setting.manage')->group(function () {
+        Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+        Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
+    });
+
+    Route::middleware('can:report.view')->group(function () {
+        Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     });
 
     Route::middleware('can:tenant.view')->group(function () {
@@ -86,4 +126,8 @@ Route::middleware(['resolve.tenant', 'capture.utm', 'capture.visit'])->group(fun
     Route::post('/kontak', [\App\Http\Controllers\PublicSite\LeadController::class, 'store']);
 
     Route::get('/page/{slug}', [\App\Http\Controllers\PublicSite\PageController::class, 'show'])->name('public.page');
+});
+
+Route::middleware(['resolve.tenant'])->group(function () {
+    Route::get('/sitemap.xml', \App\Http\Controllers\PublicSite\SitemapController::class)->name('sitemap');
 });

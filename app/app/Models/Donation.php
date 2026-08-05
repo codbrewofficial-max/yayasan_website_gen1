@@ -72,6 +72,16 @@ class Donation extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function campaignLink()
+    {
+        return $this->belongsTo(CampaignLink::class);
+    }
+
+    public function pageVisit()
+    {
+        return $this->belongsTo(PageVisit::class);
+    }
+
     public function isPaid(): bool
     {
         return $this->payment_status === self::STATUS_PAID;

@@ -152,10 +152,87 @@ class AdminReportTest extends TestCase
         $this->get('/admin/reports')->assertStatus(403);
     }
 
-    public function test_super_admin_without_tenant_gets_403(): void
+    public function test_super_admin_sees_platform_insight(): void
     {
         $this->actingAs(User::where('email', 'superadmin@system.test')->firstOrFail());
 
-        $this->get('/admin/reports')->assertStatus(403);
+        $this->get('/admin/reports')
+            ->assertStatus(200)
+            ->assertSee('Laporan')
+            ->assertSee('Performa Yayasan');
+    }
+
+    public function test_platform_report_aggregates_all_tenants(): void
+    {
+        $this->makeDonation('paid', 50000);
+
+        $other = Tenant::create([
+            'name' => 'Yayasan Kedua',
+            'subdomain' => 'kedua-report',
+            'category' => 'pendidikan',
+            'status' => 'active',
+        ]);
+        $program = Program::create([
+            'tenant_id' => $other->id,
+            'title' => 'Program Kedua',
+            'slug' => 'program-kedua-' . uniqid(),
+            'status' => 'ongoing',
+        ]);
+        $campaign = Campaign::create([
+            'tenant_id' => $other->id,
+            'program_id' => $program->id,
+            'title' => 'Campaign Kedua',
+            'slug' => 'campaign-kedua-' . uniqid(),
+            'status' => 'active',
+        ]);
+        Donation::create([
+            'tenant_id' => $other->id,
+            'campaign_id' => $campaign->id,
+            'order_id' => 'TKER-' . substr(uniqid(), -6) . 'b',
+            'donor_name' => 'Budi',
+            'donor_email' => 'budi@test.test',
+            'donor_phone' => '0812',
+            'amount' => 30000,
+            'payment_status' => 'paid',
+        ]);
+
+        $this->actingAs(User::where('email', 'superadmin@system.test')->firstOrFail());
+
+        $this->get('/admin/reports')
+            ->assertStatus(200)
+            ->assertSee('Yayasan Kerkomit')
+            ->assertSee('Yayasan Kedua')
+            ->assertSee('Rp 80.000');
+    }
+
+    public function test_report_shows_funnel_and_channel(): void
+    {
+        $this->loginAdmin();
+        $tenant = $this->tenant();
+
+        PageVisit::create([
+            'tenant_id' => $tenant->id,
+            'page_url' => '/campaign/test',
+            'device_type' => 'desktop',
+            'visited_at' => now(),
+        ]);
+
+        $donation = $this->makeDonation('paid', 70000);
+        $donation->forceFill(['utm_source' => 'instagram'])->save();
+
+        $this->get('/admin/reports')
+            ->assertSee('Funnel Konversi')
+            ->assertSee('instagram')
+            ->assertSee('Rp 70.000');
+    }
+
+    public function test_report_shows_payment_method_distribution(): void
+    {
+        $this->loginAdmin();
+
+        $donation = $this->makeDonation('paid', 45000);
+        $donation->forceFill(['payment_method' => 'qris'])->save();
+
+        $this->get('/admin/reports')->assertSee('qris')->assertSee('Metode Pembayaran');
     }
 }

@@ -68,4 +68,21 @@ class TemplateService
     {
         return app(SettingService::class)->all();
     }
+
+    /**
+     * Konfigurasi GTM/GA4 tenant aktif (null bila belum di-set).
+     * Di-cache 5 menit; di-invalidasi saat config diubah.
+     */
+    public function gtmConfig(): ?\App\Models\GtmConfig
+    {
+        $tenantId = $this->tenantContext->id();
+
+        if (! $tenantId) {
+            return null;
+        }
+
+        return Cache::remember("gtm-config:{$tenantId}", now()->addMinutes(5), function () use ($tenantId) {
+            return \App\Models\GtmConfig::query()->where('tenant_id', $tenantId)->first();
+        });
+    }
 }

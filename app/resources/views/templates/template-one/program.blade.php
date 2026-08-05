@@ -44,3 +44,15 @@
         </section>
     @endif
 @endsection
+
+@section('scripts')
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'program_view',
+            program_id: '{{ $program->id }}',
+            program_slug: '{{ $program->slug }}',
+            program_title: '{{ $program->title }}'
+        });
+    </script>
+@endsection

@@ -51,3 +51,15 @@
         </section>
     @endif
 @endsection
+
+@section('scripts')
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'article_view',
+            article_id: '{{ $article->id }}',
+            article_slug: '{{ $article->slug }}',
+            article_title: '{{ $article->title }}'
+        });
+    </script>
+@endsection

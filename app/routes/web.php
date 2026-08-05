@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\CampaignLinkController;
 use App\Http\Controllers\Admin\DonationController;
+use App\Http\Controllers\Admin\GtmConfigController;
 use App\Http\Controllers\Admin\LeadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MemberController;
@@ -104,6 +105,11 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
     Route::middleware('can:tenant.view')->group(function () {
         Route::resource('tenants', TenantController::class);
         Route::put('/tenants/{tenant}/status', [TenantController::class, 'updateStatus'])->name('tenants.status');
+    });
+
+    Route::middleware('can:tenant.edit')->group(function () {
+        Route::get('gtm', [GtmConfigController::class, 'index'])->name('gtm.index');
+        Route::put('gtm', [GtmConfigController::class, 'update'])->name('gtm.update');
     });
 
     Route::middleware('can:media.manage')->group(function () {

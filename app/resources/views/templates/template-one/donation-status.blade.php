@@ -88,3 +88,18 @@
         </div>
     </div>
 @endsection
+
+@section('scripts')
+    @if ($paid)
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'donation_completed',
+                campaign_id: '{{ $campaign->id }}',
+                campaign_slug: '{{ $campaign->slug }}',
+                order_id: '{{ $donation->order_id }}',
+                value: '{{ $donation->amount }}'
+            });
+        </script>
+    @endif
+@endsection

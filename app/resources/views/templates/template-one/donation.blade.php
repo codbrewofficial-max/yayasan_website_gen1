@@ -114,6 +114,14 @@
 
 @section('scripts')
     <script>
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'donation_started',
+            campaign_id: '{{ $campaign->id }}',
+            campaign_slug: '{{ $campaign->slug }}'
+        });
+    </script>
+    <script>
         document.querySelectorAll('.preset-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 document.getElementById('amount').value = btn.dataset.preset;

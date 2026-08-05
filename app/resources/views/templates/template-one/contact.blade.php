@@ -67,3 +67,12 @@
         </form>
     </div>
 @endsection
+
+@section('scripts')
+    @if (session('success'))
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'lead_submitted' });
+        </script>
+    @endif
+@endsection

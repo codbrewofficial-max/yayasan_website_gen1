@@ -25,6 +25,7 @@
             ['label' => 'Media', 'route' => 'admin.media.index', 'permission' => 'media.manage'],
             ['label' => 'Pengguna', 'route' => 'admin.users.index', 'permission' => 'user.manage'],
             ['label' => 'Tenant', 'route' => 'admin.tenants.index', 'permission' => 'tenant.view'],
+            ['label' => 'GTM / GA4', 'route' => 'admin.gtm.index', 'permission' => 'tenant.edit'],
             ['label' => 'Laporan', 'route' => 'admin.reports.index', 'permission' => 'report.view'],
             ['label' => 'Audit Log', 'route' => 'admin.audit-logs.index', 'permission' => 'audit.view'],
             ['label' => 'Backup', 'route' => 'admin.backups.index', 'permission' => 'backup.manage'],

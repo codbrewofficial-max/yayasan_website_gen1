@@ -3,6 +3,7 @@
 @section('title', 'Pengaturan')
 
 @section('content')
+    @php($tenantParam = request()->query('tenant_id') ? ['tenant_id' => request()->query('tenant_id')] : [])
     @if (session('success'))
         <div class="mb-4 rounded bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">{{ session('success') }}</div>
     @endif
@@ -17,8 +18,11 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.settings.update') }}" class="rounded-lg bg-white shadow-sm">
+    <form method="POST" action="{{ route('admin.settings.update', $tenantParam) }}" class="rounded-lg bg-white shadow-sm">
         @csrf
+        @if (request()->query('tenant_id'))
+            <input type="hidden" name="tenant_id" value="{{ request()->query('tenant_id') }}">
+        @endif
 
         <div class="p-6">
             <h2 class="text-lg font-semibold mb-4">Profil Organisasi</h2>
@@ -95,8 +99,11 @@
         </div>
     </form>
 
-    <form class="mt-6 rounded-lg bg-white shadow-sm" action="{{ route('admin.settings.update') }}" method="POST">
+    <form class="mt-6 rounded-lg bg-white shadow-sm" action="{{ route('admin.settings.update', $tenantParam) }}" method="POST">
         @csrf
+        @if (request()->query('tenant_id'))
+            <input type="hidden" name="tenant_id" value="{{ request()->query('tenant_id') }}">
+        @endif
 
         <div class="p-6">
             <h2 class="text-lg font-semibold mb-4">Tampilan Site Publik</h2>

@@ -67,9 +67,9 @@ class SettingService
         return array_key_exists($key, $settings) ? $settings[$key] : $default;
     }
 
-    public function all(): array
+    public function all(?string $tenantId = null): array
     {
-        $tenantId = $this->tenantContext->id();
+        $tenantId ??= $this->tenantContext->id();
 
         if (! $tenantId) {
             return self::DEFAULTS;
@@ -88,9 +88,9 @@ class SettingService
     /**
      * Simpan beberapa setting sekaligus. Kosong => hapus key.
      */
-    public function setMany(array $values): void
+    public function setMany(array $values, ?string $tenantId = null): void
     {
-        $tenantId = $this->tenantContext->requireId();
+        $tenantId ??= $this->tenantContext->requireId();
 
         foreach ($values as $key => $value) {
             if (! array_key_exists($key, self::KEYS)) {

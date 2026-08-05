@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\ResolvesTargetTenant;
 use App\Models\GtmConfig;
 use App\Models\Tenant;
 use App\Support\TenantContext;
@@ -13,13 +14,15 @@ use Illuminate\View\View;
 
 class GtmConfigController extends Controller
 {
+    use ResolvesTargetTenant;
+
     public function __construct(protected TenantContext $tenantContext)
     {
     }
 
     public function index(Request $request): View
     {
-        $tenantId = $this->resolveTenantId($request);
+        $tenantId = $this->resolveTargetTenantId($request);
 
         $config = $tenantId
             ? (GtmConfig::query()->withoutTenantScope()->where('tenant_id', $tenantId)->first() ?? new GtmConfig())
@@ -34,8 +37,7 @@ class GtmConfigController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        $tenantId = $this->resolveTenantId($request);
-        abort_unless($tenantId, 422, 'Pilih yayasan terlebih dahulu.');
+        $tenantId = $this->requireTargetTenantId($request);
 
         $data = $request->validate([
             'gtm_id' => ['nullable', 'string', 'regex:/^GTM-[A-Z0-9]+$/'],
@@ -53,29 +55,10 @@ class GtmConfigController extends Controller
             ],
         );
 
-        Cache::forget('gtm-config:' . $tenantId);
+        Cache::forget('gtm-config:' . $tenantId . ':v2');
 
         return redirect()
             ->route('admin.gtm.index', $tenantId ? ['tenant_id' => $tenantId] : [])
             ->with('success', 'Konfigurasi GTM/GA4 disimpan.');
-    }
-
-    /**
-     * Tenant target: konteks aktif (admin yayasan / super admin ber-switcher)
-     * atau query ?tenant_id= (super admin mode platform).
-     */
-    protected function resolveTenantId(Request $request): ?string
-    {
-        if ($this->tenantContext->has()) {
-            return $this->tenantContext->id();
-        }
-
-        $tenantId = $request->query('tenant_id');
-
-        if ($tenantId && Tenant::query()->withoutGlobalScopes()->whereKey($tenantId)->exists()) {
-            return $tenantId;
-        }
-
-        return null;
     }
 }

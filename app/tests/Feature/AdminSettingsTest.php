@@ -113,10 +113,47 @@ class AdminSettingsTest extends TestCase
         $this->put('/admin/settings', ['site_name' => 'X'])->assertStatus(403);
     }
 
-    public function test_super_admin_without_tenant_gets_403(): void
+    public function test_super_admin_without_tenant_sees_tenant_picker(): void
     {
         $this->actingAs(User::where('email', 'superadmin@system.test')->firstOrFail());
 
-        $this->get('/admin/settings')->assertStatus(403);
+        $this->get('/admin/settings')
+            ->assertStatus(200)
+            ->assertSee('Pilih yayasan');
+    }
+
+    public function test_super_admin_can_view_settings_of_selected_tenant(): void
+    {
+        $this->actingAs(User::where('email', 'superadmin@system.test')->firstOrFail());
+        $tenantId = Tenant::where('subdomain', 'kerkomit')->firstOrFail()->id;
+
+        $this->get('/admin/settings?tenant_id=' . $tenantId)
+            ->assertStatus(200)
+            ->assertSee('Pengaturan');
+    }
+
+    public function test_super_admin_can_save_settings_for_selected_tenant(): void
+    {
+        $this->actingAs(User::where('email', 'superadmin@system.test')->firstOrFail());
+        $tenantId = Tenant::where('subdomain', 'kerkomit')->firstOrFail()->id;
+
+        $this->put('/admin/settings?tenant_id=' . $tenantId, [
+            'site_name' => 'Kerkomit Platform',
+            'donation_min_amount' => 20000,
+        ])->assertRedirect();
+
+        $setting = Setting::query()->withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->where('key', 'site_name')
+            ->first();
+        $this->assertNotNull($setting);
+        $this->assertSame('Kerkomit Platform', $setting->value);
+    }
+
+    public function test_super_admin_invalid_tenant_id_is_rejected(): void
+    {
+        $this->actingAs(User::where('email', 'superadmin@system.test')->firstOrFail());
+
+        $this->get('/admin/settings?tenant_id=invalid-id')->assertStatus(200)->assertSee('Pilih yayasan');
     }
 }

@@ -3,8 +3,12 @@
 @section('title', 'Pengguna')
 
 @section('content')
+    @php($tenantParam = request()->query('tenant_id') ? ['tenant_id' => request()->query('tenant_id')] : [])
     <div class="mb-4 flex items-center justify-between">
         <form method="GET" class="flex items-center gap-2">
+            @if (request()->query('tenant_id'))
+                <input type="hidden" name="tenant_id" value="{{ request()->query('tenant_id') }}">
+            @endif
             <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama/email…"
                    class="rounded border border-gray-300 px-3 py-1.5 text-sm">
             <select name="role" class="rounded border border-gray-300 px-3 py-1.5 text-sm">
@@ -15,7 +19,7 @@
             </select>
             <button class="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">Filter</button>
         </form>
-        <a href="{{ route('admin.users.create') }}" class="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">Tambah Pengguna</a>
+        <a href="{{ route('admin.users.create', $tenantParam) }}" class="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">Tambah Pengguna</a>
     </div>
 
     <div class="rounded-lg bg-white shadow-sm overflow-hidden">
@@ -50,9 +54,9 @@
                                 </span>
                             </td>
                             <td class="px-5 py-3 text-right whitespace-nowrap">
-                                <a href="{{ route('admin.users.edit', $user) }}" class="text-gray-600 hover:underline text-xs">Edit</a>
+                                <a href="{{ route('admin.users.edit', ['user' => $user] + $tenantParam) }}" class="text-gray-600 hover:underline text-xs">Edit</a>
                                 @if ($user->id !== auth()->id())
-                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('Hapus pengguna ini?')">
+                                    <form method="POST" action="{{ route('admin.users.destroy', ['user' => $user] + $tenantParam) }}" class="inline" onsubmit="return confirm('Hapus pengguna ini?')">
                                         @csrf @method('DELETE')
                                         <button class="ml-2 text-red-600 hover:underline text-xs">Hapus</button>
                                     </form>

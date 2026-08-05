@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\ResolvesTargetTenant;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -12,6 +14,8 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    use ResolvesTargetTenant;
+
     public const TENANT_ROLES = ['admin_yayasan', 'staff_yayasan', 'donatur'];
 
     public function __construct(protected TenantContext $tenantContext)
@@ -20,7 +24,15 @@ class UserController extends Controller
 
     public function index(Request $request): View
     {
-        $tenantId = $this->requireTenantId();
+        $tenantId = $this->resolveTargetTenantId($request);
+
+        if (! $tenantId) {
+            return view('admin.partials.tenant-picker', [
+                'pickerTitle' => 'Pengguna',
+                'pickerRoute' => 'admin.users.index',
+                'tenants' => Tenant::query()->withoutGlobalScopes()->orderBy('name')->get(),
+            ]);
+        }
 
         $users = User::query()
             ->with('roles')
@@ -36,19 +48,19 @@ class UserController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'tenantId'));
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        $this->requireTenantId();
+        $this->requireTargetTenantId($request);
 
         return view('admin.users.form', ['user' => new User(), 'tenantRoles' => self::TENANT_ROLES]);
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $tenantId = $this->requireTenantId();
+        $tenantId = $this->requireTargetTenantId($request);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -68,25 +80,26 @@ class UserController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
+        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($tenantId);
         $user->assignRole($data['role']);
 
         return redirect()
-            ->route('admin.users.edit', $user)
+            ->route('admin.users.edit', ['user' => $user, 'tenant_id' => $tenantId])
             ->with('success', 'Pengguna berhasil dibuat.');
     }
 
-    public function edit(User $user): View
+    public function edit(Request $request, User $user): View
     {
-        $this->requireTenantId();
-        $this->guardSameTenant($user);
+        $this->requireTargetTenantId($request);
+        $this->guardSameTenant($user, $request);
 
         return view('admin.users.form', ['user' => $user, 'tenantRoles' => self::TENANT_ROLES]);
     }
 
     public function update(Request $request, User $user): RedirectResponse
     {
-        $tenantId = $this->requireTenantId();
-        $this->guardSameTenant($user);
+        $tenantId = $this->requireTargetTenantId($request);
+        $this->guardSameTenant($user, $request);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -107,34 +120,30 @@ class UserController extends Controller
         }
 
         $user->save();
+        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($tenantId);
         $user->syncRoles($data['role']);
 
         return redirect()
-            ->route('admin.users.edit', $user)
+            ->route('admin.users.edit', ['user' => $user, 'tenant_id' => $tenantId])
             ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
     public function destroy(Request $request, User $user): RedirectResponse
     {
-        $this->requireTenantId();
-        $this->guardSameTenant($user);
+        $tenantId = $this->requireTargetTenantId($request);
+        $this->guardSameTenant($user, $request);
 
         abort_if($user->id === $request->user()->id, 422, 'Tidak dapat menghapus akun sendiri.');
 
         $user->delete();
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('admin.users.index', ['tenant_id' => $tenantId])
             ->with('success', 'Pengguna dihapus.');
     }
 
-    protected function requireTenantId(): string
+    protected function guardSameTenant(User $user, Request $request): void
     {
-        return $this->tenantContext->requireId();
-    }
-
-    protected function guardSameTenant(User $user): void
-    {
-        abort_unless($user->tenant_id === $this->tenantContext->id(), 403);
+        abort_unless($user->tenant_id === $this->resolveTargetTenantId($request), 403);
     }
 }

@@ -72,6 +72,9 @@ class TemplateService
     /**
      * Konfigurasi GTM/GA4 tenant aktif (null bila belum di-set).
      * Di-cache 5 menit; di-invalidasi saat config diubah.
+     *
+     * Di-cache sebagai ARRAY (bukan instance model) untuk menghindari
+     * error unserialize (`__PHP_Incomplete_Class`) pada cache driver file/db.
      */
     public function gtmConfig(): ?\App\Models\GtmConfig
     {
@@ -81,8 +84,17 @@ class TemplateService
             return null;
         }
 
-        return Cache::remember("gtm-config:{$tenantId}", now()->addMinutes(5), function () use ($tenantId) {
-            return \App\Models\GtmConfig::query()->where('tenant_id', $tenantId)->first();
+        $data = Cache::remember("gtm-config:{$tenantId}:v2", now()->addMinutes(5), function () use ($tenantId) {
+            return \App\Models\GtmConfig::query()
+                ->where('tenant_id', $tenantId)
+                ->first()
+                ?->toArray();
         });
+
+        if (! is_array($data)) {
+            return null;
+        }
+
+        return (new \App\Models\GtmConfig())->forceFill($data);
     }
 }

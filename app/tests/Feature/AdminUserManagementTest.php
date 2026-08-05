@@ -160,4 +160,65 @@ class AdminUserManagementTest extends TestCase
 
         $this->get('/admin/users')->assertStatus(403);
     }
+
+    public function test_super_admin_without_tenant_sees_tenant_picker(): void
+    {
+        $this->loginAs('superadmin@system.test');
+
+        $this->get('/admin/users')
+            ->assertStatus(200)
+            ->assertSee('Pilih yayasan');
+    }
+
+    public function test_super_admin_can_list_users_of_selected_tenant(): void
+    {
+        $this->loginAs('superadmin@system.test');
+        $tenantId = $this->tenant()->id;
+
+        $this->get('/admin/users?tenant_id=' . $tenantId)
+            ->assertStatus(200)
+            ->assertSee('admin@kerkomit.test');
+    }
+
+    public function test_super_admin_can_create_user_for_selected_tenant(): void
+    {
+        $this->loginAs('superadmin@system.test');
+        $tenantId = $this->tenant()->id;
+
+        $this->post('/admin/users?tenant_id=' . $tenantId, [
+            'name' => 'Staff Super',
+            'email' => 'staff-super@kerkomit.test',
+            'password' => 'secret1234',
+            'is_active' => '1',
+            'role' => 'staff_yayasan',
+        ])->assertRedirect();
+
+        $user = User::where('email', 'staff-super@kerkomit.test')->firstOrFail();
+        $this->assertSame($tenantId, $user->tenant_id);
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId($tenantId);
+        $this->assertTrue($user->hasRole('staff_yayasan'));
+    }
+
+    public function test_super_admin_cannot_edit_user_of_another_tenant(): void
+    {
+        $this->loginAs('superadmin@system.test');
+        $tenantId = $this->tenant()->id;
+
+        $user = User::create([
+            'tenant_id' => $tenantId,
+            'name' => 'Milik Kerkomit',
+            'email' => 'milik-kerkomit@test.test',
+            'password' => Hash::make('secret1234'),
+        ]);
+
+        $other = Tenant::create([
+            'name' => 'Yayasan Lain',
+            'subdomain' => 'lain-user',
+            'category' => 'sosial',
+            'status' => 'active',
+        ]);
+
+        $this->get('/admin/users/' . $user->id . '/edit?tenant_id=' . $other->id)->assertStatus(403);
+    }
 }

@@ -43,7 +43,19 @@ class DonationController extends Controller
             'term' => $request->query('utm_term'),
         ];
 
-        return view($this->templateService->baseView('donation'), compact('campaign', 'seo', 'utm'));
+        $snap = null;
+        if ($snapToken = $request->session()->get('snap_token')) {
+            $snap = [
+                'token' => $snapToken,
+                'order_id' => $request->session()->get('snap_order_id'),
+                'client_key' => config('payment.midtrans.client_key'),
+                'url' => config('payment.midtrans.is_production')
+                    ? 'https://app.midtrans.com/snap/snap.js'
+                    : 'https://app.sandbox.midtrans.com/snap/snap.js',
+            ];
+        }
+
+        return view($this->templateService->baseView('donation'), compact('campaign', 'seo', 'utm', 'snap'));
     }
 
     public function store(Request $request, string $slug): RedirectResponse
@@ -87,13 +99,22 @@ class DonationController extends Controller
             return back()->withInput()->withErrors(['amount' => $e->getMessage()]);
         }
 
+        // Prefer Snap.js: flash token & buka popup pembayaran.
+        // Fallback redirect ke halaman hosted bila hanya redirect_url yang tersedia.
+        if (! empty($result['token'])) {
+            return redirect()
+                ->route('public.donation', $campaign->slug)
+                ->with('snap_token', $result['token'])
+                ->with('snap_order_id', $result['donation']->order_id);
+        }
+
         if ($result['redirect_url']) {
             return redirect()->away($result['redirect_url']);
         }
 
         return redirect()
             ->route('public.donation', $campaign->slug)
-            ->with('snap_token', $result['token']);
+            ->withErrors(['amount' => 'Pembayaran gagal dimulai, silakan coba lagi.']);
     }
 
     /**

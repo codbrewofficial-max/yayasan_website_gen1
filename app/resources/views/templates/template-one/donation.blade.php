@@ -40,15 +40,14 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-bold mb-4">Form Donasi</h2>
 
-            @if (session('snap_token'))
-                <div class="mb-4 rounded-lg bg-blue-50 border border-blue-200 p-4 text-sm text-blue-800">
-                    Pembayaran menunggu konfirmasi. Gunakan token berikut:
-                    <code class="block mt-2 bg-white rounded p-2 text-xs">{{ session('snap_token') }}</code>
-                </div>
-            @endif
-
             @if (! empty($settings['donation_notice']))
                 <div class="mb-4 rounded-lg bg-gray-50 border border-gray-200 p-4 text-sm text-gray-700">{!! nl2br(e($settings['donation_notice'])) !!}</div>
+            @endif
+
+            @if ($snap && $snap['client_key'])
+                <div class="mb-4 rounded-lg bg-gray-50 border border-gray-200 p-4 text-sm text-gray-700">
+                    Setelah mengisi form dan menekan tombol, jendela pembayaran Midtrans akan terbuka.
+                </div>
             @endif
 
             <form method="POST" action="{{ route('public.donation', $campaign->slug) }}" class="space-y-4">
@@ -121,4 +120,43 @@
             });
         });
     </script>
+
+    @if ($snap && $snap['client_key'])
+        <script src="{{ $snap['url'] }}" data-client-key="{{ $snap['client_key'] }}"></script>
+        <script>
+            (function () {
+                @php
+                    $statusUrl = $snap['order_id']
+                        ? route('public.donation.status', [$campaign->slug, $snap['order_id']])
+                        : null;
+                @endphp
+                window.snap.pay('{{ $snap['token'] }}', {
+                    onSuccess: function () {
+                        @if ($statusUrl)
+                            window.location.href = '{{ $statusUrl }}';
+                        @else
+                            window.location.reload();
+                        @endif
+                    },
+                    onPending: function () {
+                        @if ($statusUrl)
+                            window.location.href = '{{ $statusUrl }}';
+                        @else
+                            window.location.reload();
+                        @endif
+                    },
+                    onError: function () {
+                        @if ($statusUrl)
+                            window.location.href = '{{ $statusUrl }}';
+                        @else
+                            window.location.reload();
+                        @endif
+                    },
+                    onClose: function () {
+                        // Pengguna menutup popup — tetap di halaman.
+                    }
+                });
+            })();
+        </script>
+    @endif
 @endsection

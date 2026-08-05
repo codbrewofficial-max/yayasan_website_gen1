@@ -15,7 +15,7 @@ class StubPaymentGateway implements PaymentGateway
         $orderId = $params['order_id'];
 
         return [
-            'token' => 'stub_' . md5($orderId),
+            'token' => null,
             'redirect_url' => 'https://pay.example.test/' . Str::slug($orderId),
             'ref' => 'STUB-' . Str::upper(Str::limit(md5($orderId), 12)),
         ];

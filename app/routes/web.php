@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\TwoFactorSetupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TenantSwitcherController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProgramController;
@@ -35,6 +36,7 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
     Route::middleware('can:content.manage')->group(function () {
         Route::resource('programs', ProgramController::class);
         Route::resource('campaigns', CampaignController::class);
+        Route::resource('articles', ArticleController::class);
     });
 
     Route::middleware('can:tenant.view')->group(function () {

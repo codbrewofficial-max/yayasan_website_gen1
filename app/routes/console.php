@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command(MarkExpiredDonations::class)->everyFiveMinutes();
+
+Schedule::command('backup:run --scope=platform')->dailyAt('02:00');

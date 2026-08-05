@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Article extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes, BelongsToTenant;
+    use HasFactory, HasUuids, SoftDeletes, BelongsToTenant, LogsActivity;
 
     public const STATUS_DRAFT = 'draft';
     public const STATUS_SCHEDULED = 'scheduled';

@@ -47,6 +47,8 @@ class TwoFactorController extends Controller
         Auth::login($user, $remember);
         $request->session()->regenerate();
 
+        app(\App\Services\AuditLogService::class)->logAuth('login', $user);
+
         return redirect()->intended(route('admin.dashboard'));
     }
 

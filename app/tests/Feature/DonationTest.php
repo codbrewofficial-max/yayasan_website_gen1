@@ -21,6 +21,7 @@ class DonationTest extends TestCase
         $this->seed();
         $this->tenant = Tenant::where('subdomain', 'kerkomit')->firstOrFail();
         app(\App\Support\TenantContext::class)->set($this->tenant);
+        config()->set('payment.midtrans.server_key', null);
     }
 
     protected function campaign(): Campaign

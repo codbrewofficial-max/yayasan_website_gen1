@@ -7,6 +7,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TenantSwitcherController;
 use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\CampaignLinkController;
 use App\Http\Controllers\Admin\DonationController;
@@ -85,6 +87,18 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
 
     Route::middleware('can:report.view')->group(function () {
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    });
+
+    Route::middleware('can:audit.view')->group(function () {
+        Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+    });
+
+    Route::middleware('can:backup.manage')->group(function () {
+        Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::post('backups', [BackupController::class, 'store'])->name('backups.store');
+        Route::get('backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');
+        Route::post('backups/{backup}/restore', [BackupController::class, 'restore'])->name('backups.restore');
+        Route::delete('backups/{backup}', [BackupController::class, 'destroy'])->name('backups.destroy');
     });
 
     Route::middleware('can:tenant.view')->group(function () {

@@ -41,6 +41,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('two-factor.challenge');
         }
 
+        app(\App\Services\AuditLogService::class)->logAuth('login', $user);
+
         $request->session()->regenerate();
         $request->session()->put('two_factor:auth:remember', $request->boolean('remember'));
 
@@ -49,6 +51,10 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        if ($user = $request->user()) {
+            app(\App\Services\AuditLogService::class)->logAuth('logout', $user);
+        }
+
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

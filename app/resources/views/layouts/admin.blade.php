@@ -26,6 +26,8 @@
             ['label' => 'Pengguna', 'route' => 'admin.users.index', 'permission' => 'user.manage'],
             ['label' => 'Tenant', 'route' => 'admin.tenants.index', 'permission' => 'tenant.view'],
             ['label' => 'Laporan', 'route' => 'admin.reports.index', 'permission' => 'report.view'],
+            ['label' => 'Audit Log', 'route' => 'admin.audit-logs.index', 'permission' => 'audit.view'],
+            ['label' => 'Backup', 'route' => 'admin.backups.index', 'permission' => 'backup.manage'],
             ['label' => 'Pengaturan', 'route' => 'admin.settings.index', 'permission' => 'setting.manage'],
         ];
 

@@ -26,6 +26,8 @@ class RoleAndPermissionSeeder extends Seeder
             'report.view',
             'setting.manage',
             'media.manage',
+            'audit.view',
+            'backup.manage',
         ];
 
         foreach ($permissions as $permission) {
@@ -42,6 +44,8 @@ class RoleAndPermissionSeeder extends Seeder
             'report.view',
             'setting.manage',
             'media.manage',
+            'audit.view',
+            'backup.manage',
         ]);
 
         $this->createTenantRole('staff_yayasan', [

@@ -5,9 +5,11 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\TwoFactorSetupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TenantSwitcherController;
+use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\TenantController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +39,12 @@ Route::middleware(['auth', 'admin.tenant'])->prefix('admin')->name('admin.')->gr
         Route::resource('programs', ProgramController::class);
         Route::resource('campaigns', CampaignController::class);
         Route::resource('articles', ArticleController::class);
+
+        Route::resource('albums', AlbumController::class);
+        Route::post('/albums/{album}/gallery', [AlbumController::class, 'addGallery'])->name('albums.gallery');
+        Route::delete('/galleries/{gallery}', [AlbumController::class, 'removeGallery'])->name('galleries.destroy');
+
+        Route::resource('members', MemberController::class);
     });
 
     Route::middleware('can:tenant.view')->group(function () {

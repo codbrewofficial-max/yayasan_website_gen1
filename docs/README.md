@@ -47,6 +47,11 @@ Desain tabel & relasi.
 |---|---|
 | [UI/UX Wireframe](./ui-ux-wireframe.md) | Wireframe semua halaman public + content sections |
 
+### 7. Pengujian
+| Dokumen | Isi |
+|---|---|
+| [Manual End-to-End Test](./e2e-manual-test.md) | Tahapan uji E2E manual + referensi dummy data |
+
 ## Struktur Folder
 
 ```
@@ -59,6 +64,7 @@ docs/
 ├── public-site-architecture.md
 ├── business-logic.md
 ├── ui-ux-wireframe.md
+├── e2e-manual-test.md                 ← tahapan uji E2E manual + dummy data
 ├── modules/                           ← 17 modul + index
 └── erd/                               ← ERD master + 17 per modul
 ```
